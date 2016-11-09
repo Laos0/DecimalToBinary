@@ -9,15 +9,39 @@ using namespace std;
 
 void intro();
 void decToBinary(int n);
-void baseFinder(int amt, int baseNumber, string arrNum);
+void baseFinder(int amt, int baseNumber, vector<string>* arrString);
 
 int main() {
 
+	int num = 0;
+	int baseNum;
+	bool quitFlag = false;
+	
+	do {
+		cout << "Enter a nonnegative integer: " << endl;
+		cin >> num;
+		cout << "Enter the desired base between 2 and 36." << endl;
+		cin >> baseNum;
 
-	//intro();
-	//cout << num << endl;
-	baseFinder(60, 16, "");
 
+
+		if (baseNum < 2 || baseNum > 36) {
+			cout << "Stop!" << endl;
+			quitFlag = true;
+		}
+		else {
+			vector<string>* arrString = new vector<string>;
+			baseFinder(num, baseNum, arrString);
+
+			for (int i = arrString->size() - 1; i >= 0; i--) {
+				cout << arrString->at(i);
+			}
+
+			cout << endl;
+			cout << "--------------------------------------------" << endl;
+
+		}
+	} while (!quitFlag);
 
 
 	/* ALLLL BELOW: CONVERTING DECIMALS TO BINARY 
@@ -42,31 +66,7 @@ int main() {
 	return 0;
 
 }
-void intro() {
-	int num = 0;
-	int baseNum;
 
-	cout << "Enter a nonnegative integer: " << endl;
-	cin >> num;
-
-	if (num < 0) {
-		intro();
-	}
-	
-	cout << "Enter the desired base between 2 and 36." << endl;
-	cin >> baseNum;
-	
-
-	if(baseNum < 2 || baseNum > 36){
-		cout << "Stop!" << endl;
-	}
-	else {
-		decToBinary(num);
-		//cout << "Good Job!" << endl;
-	}
-	
-
-}
 
 void decToBinary(int n) {
 	if (n == 0 || n == 1) {
@@ -79,8 +79,8 @@ void decToBinary(int n) {
 	}
 }
 
-void baseFinder(int v, int b, string arrNum) {
-	string rem2 = "";
+void baseFinder(int v, int b, vector<string>* arrString) {
+	string rem2;
 
 	bool greaterThanNine = false;
 
@@ -92,13 +92,12 @@ void baseFinder(int v, int b, string arrNum) {
 	int rem = v % b;
 
 	// A quotient > 0 means there is a chance for another recursive
-	// therefore, quotient of zer stops the recursive 
+	// therefore, quotient of zero stops the recursive 
 	if (quot > 0) {
-	
+
 
 		// hexa conversion when you get a remainder of 10 or higher 
 		if (rem > 9) {
-
 			greaterThanNine = true;
 			//the map of hex characters we can get using conversion
 			vector<string> hexArray;
@@ -119,7 +118,7 @@ void baseFinder(int v, int b, string arrNum) {
 			hexArray.push_back("O");
 			hexArray.push_back("P");
 			hexArray.push_back("Q");
-			hexArray.push_back("R"); 
+			hexArray.push_back("R");
 			hexArray.push_back("S");
 			hexArray.push_back("T");
 			hexArray.push_back("U");
@@ -141,31 +140,28 @@ void baseFinder(int v, int b, string arrNum) {
 				rem2 = to_string(rem);
 				rem2 = hexArray.at(index);
 			}
-			
 		}
-		
-		if (greaterThanNine) {
-			//store the remainder
-			//the remainder could be 0-9 or hex character A-Z
-			//where A = 10, B = 11, ... Z = 35
-			arrNum.push_back(rem2.c_str);
 
+		if (!greaterThanNine) {
+			rem2 = to_string(rem);
 		}
-		else {
-			arrNum.push_back(rem);
-		}
+
+		//store the remainder
+		//the remainder could be 0-9 or hex character A-Z
+		//where A = 10, B = 11, ... Z = 35
+		arrString->push_back(rem2);
 
 		//if there was an error, stop the recursive early
 		if (!errorFlag) {
 			//if no error, do another recursive
-
-			cout << arrNum << endl;
-
-			baseFinder(floor(quot), b, arrNum);
+			baseFinder(floor(quot), b, arrString);
 		}
 		else {
 			cout << "error" << endl;
 		}
+	}
+	else {
+		arrString->push_back(to_string(v));
 	}
 }
 
